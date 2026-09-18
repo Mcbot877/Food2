@@ -2,9 +2,9 @@
 
 @layer base {
   :root {
-    --font-display: 'Syne', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    --font-mono: 'Space Grotesk', monospace;
+    --font-mono: 'Plus Jakarta Sans', monospace;
   }
 
   body {
@@ -12,11 +12,13 @@
     background-color: #07080B;
     color: #F3F4F6;
     overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
   }
 
-  h1, h2, h3, .font-display {
+  h1, h2, h3, h4, .font-display {
     font-family: var(--font-display);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.015em;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 }
 

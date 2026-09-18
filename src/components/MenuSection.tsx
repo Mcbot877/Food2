@@ -1,15 +1,19 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { FoodCard } from './FoodCard';
 import { useFood } from '../context/FoodContext';
 import { FoodCategory } from '../types';
 import { CATEGORIES } from '../data/mockData';
-import { Search, SlidersHorizontal, RefreshCw, Flame } from 'lucide-react';
+import { Search, SlidersHorizontal, RefreshCw, Flame, DollarSign, Sparkles, Check } from 'lucide-react';
+import { animateCardsStagger } from '../utils/animeAnimations';
 
 export const MenuSection: React.FC = () => {
   const { foodItems, selectedCategory, setSelectedCategory, inventory } = useFood();
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'recommended' | 'price-low' | 'price-high' | 'rating'>('recommended');
+  const [maxPrice, setMaxPrice] = useState<number>(45);
+  const [onlyChefSpecials, setOnlyChefSpecials] = useState(false);
+  const [onlyInStock, setOnlyInStock] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Compute filtered & sorted items
@@ -19,6 +23,22 @@ export const MenuSection: React.FC = () => {
     // Filter by Category
     if (selectedCategory !== 'All') {
       list = list.filter((item) => item.category === selectedCategory);
+    }
+
+    // Filter by Max Price Slide Bar
+    list = list.filter((item) => item.price <= maxPrice);
+
+    // Filter by Chef Specials toggle
+    if (onlyChefSpecials) {
+      list = list.filter((item) => item.chefSpecial);
+    }
+
+    // Filter by In-Stock toggle
+    if (onlyInStock) {
+      list = list.filter((item) => {
+        const stock = inventory[item.id] !== undefined ? inventory[item.id] : item.inStock;
+        return stock > 0;
+      });
     }
 
     // Filter by Search Query
@@ -51,7 +71,12 @@ export const MenuSection: React.FC = () => {
     }
 
     return list;
-  }, [foodItems, selectedCategory, searchQuery, sortBy]);
+  }, [foodItems, selectedCategory, searchQuery, sortBy, maxPrice, onlyChefSpecials, onlyInStock, inventory]);
+
+  // Run Anime.js stagger on filter or category change
+  useEffect(() => {
+    animateCardsStagger('.food-card-anime');
+  }, [selectedCategory, sortBy, maxPrice, onlyChefSpecials, onlyInStock]);
 
   const handleRefreshInventory = async () => {
     setIsRefreshing(true);
@@ -83,33 +108,33 @@ export const MenuSection: React.FC = () => {
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-mono uppercase tracking-widest mb-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-mono uppercase tracking-widest mb-3">
               <Flame className="w-3.5 h-3.5" />
               <span>Epicurean Catalog</span>
             </div>
-            <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
+            <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight font-display">
               Signature <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-orange-500">Gastronomy</span>
             </h2>
           </div>
 
           {/* Quick Stats & Live Refresh Indicator */}
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={handleRefreshInventory}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-xs font-mono text-neutral-300 border border-white/10 transition-colors"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-xs font-mono text-neutral-300 border border-white/10 transition-colors active:scale-95"
               title="Sync live inventory with kitchen"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-amber-400' : ''}`} />
               <span>Live Kitchen Stock</span>
             </button>
-            <div className="text-xs font-mono text-neutral-400 bg-black/40 px-3 py-1.5 rounded-xl border border-white/10">
+            <div className="text-xs font-mono text-neutral-400 bg-black/40 px-3.5 py-2 rounded-xl border border-white/10">
               Showing <span className="text-amber-300 font-bold">{displayedItems.length}</span> dishes
             </div>
           </div>
         </div>
 
-        {/* Filters Bar: Categories & Sorting */}
-        <div className="space-y-4 mb-12">
+        {/* Filters Bar: Categories, Interactive Slide Bar & Sorting */}
+        <div className="space-y-4 mb-10">
           {/* Scrollable Category Tabs */}
           <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
             {allCategoryTabs.map((cat) => {
@@ -118,7 +143,7 @@ export const MenuSection: React.FC = () => {
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-300 flex items-center gap-1.5 ${
+                  className={`px-4 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-300 flex items-center gap-1.5 active:scale-95 ${
                     isSelected
                       ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/30'
                       : 'bg-white/[0.04] text-neutral-300 hover:text-white hover:bg-white/[0.08] border border-white/[0.06]'
@@ -139,17 +164,17 @@ export const MenuSection: React.FC = () => {
             })}
           </div>
 
-          {/* Search Input & Sort Dropdown */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-3 rounded-2xl bg-[#0C0E16]/80 border border-white/[0.08]">
+          {/* Interactive Slide Bar Control Panel */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 p-4 rounded-2xl bg-[#0C0E16]/80 border border-white/[0.08] backdrop-blur-md">
             {/* Search Input */}
-            <div className="relative w-full sm:w-80">
+            <div className="lg:col-span-4 relative">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search dish, truffle, wagyu, matcha..."
-                className="w-full pl-10 pr-4 py-2 bg-black/40 rounded-xl border border-white/[0.06] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-amber-400/50 transition-colors"
+                className="w-full pl-10 pr-8 py-2.5 bg-black/40 rounded-xl border border-white/[0.08] text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-amber-400/50 transition-colors"
               />
               {searchQuery && (
                 <button
@@ -161,20 +186,74 @@ export const MenuSection: React.FC = () => {
               )}
             </div>
 
-            {/* Sort Controller */}
-            <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-              <SlidersHorizontal className="w-3.5 h-3.5 text-neutral-400" />
-              <span className="text-xs text-neutral-400 font-mono">Sort:</span>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
-                className="bg-black/50 text-xs text-neutral-200 border border-white/10 rounded-xl px-3 py-2 focus:outline-none focus:border-amber-400/50 cursor-pointer"
+            {/* Interactive Price Range Slide Bar */}
+            <div className="lg:col-span-4 flex flex-col justify-center px-2">
+              <div className="flex items-center justify-between text-xs font-mono mb-1.5">
+                <span className="text-neutral-400 flex items-center gap-1">
+                  <DollarSign className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Max Price Slide Bar:</span>
+                </span>
+                <span className="text-amber-400 font-bold font-mono text-sm">${maxPrice}.00</span>
+              </div>
+              <input
+                id="menu-price-slider"
+                type="range"
+                min="12"
+                max="45"
+                step="1"
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(Number(e.target.value))}
+                className="w-full h-1.5 bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
+              />
+              <div className="flex justify-between text-[10px] font-mono text-neutral-500 mt-1">
+                <span>$12</span>
+                <span>$25</span>
+                <span>$35</span>
+                <span>$45</span>
+              </div>
+            </div>
+
+            {/* Filter Toggles & Sort Dropdown */}
+            <div className="lg:col-span-4 flex flex-wrap items-center justify-between lg:justify-end gap-2">
+              {/* Chef Specials Toggle */}
+              <button
+                onClick={() => setOnlyChefSpecials(!onlyChefSpecials)}
+                className={`px-3 py-2 rounded-xl text-xs font-mono flex items-center gap-1.5 transition-all border ${
+                  onlyChefSpecials
+                    ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                    : 'bg-white/[0.03] text-neutral-400 border-white/[0.06] hover:text-white'
+                }`}
               >
-                <option value="recommended">Chef Recommended</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
-                <option value="rating">Highest Rated</option>
-              </select>
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>Chef Specials</span>
+              </button>
+
+              {/* In Stock Toggle */}
+              <button
+                onClick={() => setOnlyInStock(!onlyInStock)}
+                className={`px-3 py-2 rounded-xl text-xs font-mono flex items-center gap-1.5 transition-all border ${
+                  onlyInStock
+                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                    : 'bg-white/[0.03] text-neutral-400 border-white/[0.06] hover:text-white'
+                }`}
+              >
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+                <span>In Stock</span>
+              </button>
+
+              {/* Sort Controller */}
+              <div className="flex items-center gap-1.5">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as any)}
+                  className="bg-black/60 text-xs text-neutral-200 border border-white/10 rounded-xl px-3 py-2 focus:outline-none focus:border-amber-400/50 cursor-pointer font-mono"
+                >
+                  <option value="recommended">Recommended</option>
+                  <option value="price-low">Price: Low to High</option>
+                  <option value="price-high">Price: High to Low</option>
+                  <option value="rating">Highest Rated</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
@@ -188,16 +267,19 @@ export const MenuSection: React.FC = () => {
           </div>
         ) : (
           <div className="text-center py-20 rounded-3xl bg-white/[0.02] border border-white/[0.06]">
-            <p className="text-lg font-display text-neutral-300">No gastronomy items match your query.</p>
-            <p className="text-xs text-neutral-500 mt-1">Try clearing your search query or choosing another category.</p>
+            <p className="text-lg font-display text-neutral-300">No gastronomy items match your criteria.</p>
+            <p className="text-xs text-neutral-500 mt-1">Try moving the price slide bar higher or resetting filters.</p>
             <button
               onClick={() => {
                 setSearchQuery('');
                 setSelectedCategory('All');
+                setMaxPrice(45);
+                setOnlyChefSpecials(false);
+                setOnlyInStock(false);
               }}
-              className="mt-4 px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-semibold"
+              className="mt-4 px-5 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-semibold hover:bg-amber-500/20 transition-all"
             >
-              Reset Filters
+              Reset Filters & Slide Bar
             </button>
           </div>
         )}

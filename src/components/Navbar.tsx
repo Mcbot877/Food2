@@ -1,10 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ShoppingBag, Search, Sparkles, Menu, X, Heart, Clock } from 'lucide-react';
+import { ShoppingBag, Search, Sparkles, Menu, X, Heart, Clock, Receipt } from 'lucide-react';
 import { useFood } from '../context/FoodContext';
 
 export const Navbar: React.FC = () => {
-  const { cartTotalCount, setIsCartOpen, setIsSearchOpen, setIsAIOpen, favorites, activeOrder, setIsTrackingOpen } = useFood();
+  const { 
+    cartTotalCount, 
+    setIsCartOpen, 
+    setIsSearchOpen, 
+    setIsAIOpen, 
+    favorites, 
+    activeOrder, 
+    setIsTrackingOpen,
+    ordersHistory,
+    setIsOrderHistoryOpen
+  } = useFood();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -167,6 +177,23 @@ export const Navbar: React.FC = () => {
               )}
             </a>
 
+            {/* Orders Vault Trigger Button */}
+            <button
+              id="navbar-orders-btn"
+              onClick={() => setIsOrderHistoryOpen(true)}
+              className="relative flex items-center gap-1.5 px-3 py-2 rounded-full bg-white/[0.05] hover:bg-white/[0.1] text-neutral-200 hover:text-white border border-white/[0.08] text-xs font-semibold transition-all active:scale-95"
+              aria-label="Orders Vault"
+              title="View Saved Orders & Tracking"
+            >
+              <Receipt className="w-4 h-4 text-amber-400" />
+              <span className="hidden sm:inline">Orders</span>
+              {ordersHistory.length > 0 && (
+                <span className="w-4 h-4 bg-amber-500 text-black font-mono text-[10px] rounded-full flex items-center justify-center font-bold">
+                  {ordersHistory.length}
+                </span>
+              )}
+            </button>
+
             {/* Cart Drawer Trigger Button */}
             <button
               id="navbar-cart-btn"
@@ -223,6 +250,21 @@ export const Navbar: React.FC = () => {
                 ))}
               </div>
               <div className="pt-3 border-t border-white/10 flex flex-col gap-2">
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setIsOrderHistoryOpen(true);
+                  }}
+                  className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-neutral-200 text-xs font-semibold"
+                >
+                  <span className="flex items-center gap-2">
+                    <Receipt className="w-4 h-4 text-amber-400" />
+                    <span>My Saved Orders Vault</span>
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-mono text-[10px]">
+                    {ordersHistory.length}
+                  </span>
+                </button>
                 <button
                   onClick={() => {
                     setMobileMenuOpen(false);

@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { Star, Heart, Plus, Sparkles, Flame } from 'lucide-react';
 import { FoodItem } from '../types';
 import { useFood } from '../context/FoodContext';
+import { animateButtonTactile } from '../utils/animeAnimations';
 
 interface FoodCardProps {
   food: FoodItem;
@@ -39,7 +40,7 @@ export const FoodCard: React.FC<FoodCardProps> = ({ food, index }) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
       transition={{ duration: 0.5, delay: (index % 6) * 0.08 }}
-      className="relative perspective-[1000px]"
+      className="food-card-anime relative perspective-[1000px]"
     >
       <div
         ref={cardRef}
@@ -165,6 +166,7 @@ export const FoodCard: React.FC<FoodCardProps> = ({ food, index }) => {
               onClick={(e) => {
                 e.stopPropagation();
                 if (!isOutOfStock) {
+                  animateButtonTactile(e.currentTarget);
                   addToCart(food, 1, {}, e);
                 }
               }}

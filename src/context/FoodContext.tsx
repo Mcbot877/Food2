@@ -15,6 +15,11 @@ interface FoodContextType {
   activeDetailDish: FoodItem | null;
   activeOrder: Order | null;
   isTrackingOpen: boolean;
+  ordersHistory: Order[];
+  isOrderHistoryOpen: boolean;
+  setIsOrderHistoryOpen: (open: boolean) => void;
+  reorder: (order: Order) => void;
+  clearOrderHistory: () => void;
   activePromo: { code: string; percent: number; freeDelivery?: boolean } | null;
   toastMessage: string | null;
   setSelectedCategory: (cat: FoodCategory | 'All') => void;
@@ -80,6 +85,15 @@ export const FoodProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [activeDetailDish, setActiveDetailDish] = useState<FoodItem | null>(null);
   const [activeOrder, setActiveOrder] = useState<Order | null>(null);
   const [isTrackingOpen, setIsTrackingOpen] = useState(false);
+  const [isOrderHistoryOpen, setIsOrderHistoryOpen] = useState(false);
+  const [ordersHistory, setOrdersHistory] = useState<Order[]>(() => {
+    try {
+      const local = localStorage.getItem('aura_orders_history');
+      return local ? JSON.parse(local) : [];
+    } catch {
+      return [];
+    }
+  });
   const [activePromo, setActivePromo] = useState<{ code: string; percent: number; freeDelivery?: boolean } | null>({
     code: 'AURA20',
     percent: 20,
@@ -288,7 +302,16 @@ export const FoodProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (data.success && data.order) {
-        setActiveOrder(data.order);
+        const newOrder = data.order;
+        setActiveOrder(newOrder);
+        setOrdersHistory((prev) => {
+          const filtered = prev.filter((o) => o.id !== newOrder.id);
+          const updated = [newOrder, ...filtered];
+          try {
+            localStorage.setItem('aura_orders_history', JSON.stringify(updated));
+          } catch {}
+          return updated;
+        });
         setCart([]);
         setIsCartOpen(false);
         setIsTrackingOpen(true);
@@ -296,13 +319,69 @@ export const FoodProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (data.updatedInventory) {
           setInventory(data.updatedInventory);
         }
-        return { success: true, order: data.order };
+        showToast(`Order #${newOrder.id} confirmed & saved to Order Vault!`);
+        return { success: true, order: newOrder };
       }
       return { success: false, error: 'Could not process order.' };
     } catch (err: any) {
       return { success: false, error: 'Network communication glitch with order gateway.' };
     }
   };
+
+  // Reorder past order items
+  const reorder = (pastOrder: Order) => {
+    let addedCount = 0;
+    pastOrder.items.forEach((item) => {
+      const food = foodItems.find((f) => f.id === item.foodId);
+      if (food) {
+        addToCart(food, item.quantity, item.selectedCustomizations);
+        addedCount += item.quantity;
+      }
+    });
+    if (addedCount > 0) {
+      setIsOrderHistoryOpen(false);
+      setIsCartOpen(true);
+      showToast(`Restored ${addedCount} items from Order #${pastOrder.id} to Cart!`);
+    } else {
+      showToast('Items from this order are currently unavailable.');
+    }
+  };
+
+  const clearOrderHistory = () => {
+    setOrdersHistory([]);
+    try {
+      localStorage.removeItem('aura_orders_history');
+    } catch {}
+    showToast('Orders vault history cleared.');
+  };
+
+  // Fetch initial orders from server if any
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const res = await fetch('/api/orders');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.orders && Array.isArray(data.orders) && data.orders.length > 0) {
+            setOrdersHistory((prev) => {
+              const combined = [...data.orders, ...prev];
+              const seen = new Set();
+              const deduped = combined.filter((o) => {
+                if (seen.has(o.id)) return false;
+                seen.add(o.id);
+                return true;
+              });
+              try {
+                localStorage.setItem('aura_orders_history', JSON.stringify(deduped));
+              } catch {}
+              return deduped;
+            });
+          }
+        }
+      } catch {}
+    };
+    fetchOrders();
+  }, []);
 
   return (
     <FoodContext.Provider
@@ -318,6 +397,11 @@ export const FoodProvider: React.FC<{ children: React.ReactNode }> = ({ children
         activeDetailDish,
         activeOrder,
         isTrackingOpen,
+        ordersHistory,
+        isOrderHistoryOpen,
+        setIsOrderHistoryOpen,
+        reorder,
+        clearOrderHistory,
         activePromo,
         toastMessage,
         setSelectedCategory,

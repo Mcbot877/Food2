@@ -204,6 +204,14 @@ async function startServer() {
     res.json({ success: true, order });
   });
 
+  // GET All Orders (History)
+  app.get("/api/orders", (_req, res) => {
+    const allOrders = Array.from(ordersDatabase.values()).sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+    res.json({ success: true, orders: allOrders, totalCount: allOrders.length });
+  });
+
   // POST AI Gastronomy Sommelier & Pairing Assistant
   app.post("/api/ai-recommend", async (req, res) => {
     const { tastePreference, selectedDishName, dietary } = req.body;

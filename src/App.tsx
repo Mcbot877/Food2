@@ -18,6 +18,7 @@ import { CartDrawer } from './components/CartDrawer';
 import { SearchModal } from './components/SearchModal';
 import { AISommelierModal } from './components/AISommelierModal';
 import { OrderTrackingModal } from './components/OrderTrackingModal';
+import { OrdersDrawer } from './components/OrdersDrawer';
 import { Toast } from './components/Toast';
 import { CustomCursor } from './components/CustomCursor';
 
@@ -55,6 +56,7 @@ export default function App() {
         <SearchModal />
         <AISommelierModal />
         <OrderTrackingModal />
+        <OrdersDrawer />
         <Toast />
       </div>
     </FoodProvider>

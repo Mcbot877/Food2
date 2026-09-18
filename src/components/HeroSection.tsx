@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { ArrowRight, Sparkles, Star, Flame, Clock, Award, Plus } from 'lucide-react';
 import { useFood } from '../context/FoodContext';
+import { animateHeroEntrance, initContinuousFloating, animateButtonTactile } from '../utils/animeAnimations';
 
 export const HeroSection: React.FC = () => {
   const { foodItems, addToCart, setActiveDetailDish } = useFood();
@@ -9,11 +10,22 @@ export const HeroSection: React.FC = () => {
 
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
+  const heroButtonRef = useRef<HTMLButtonElement>(null);
 
   // Parallax scroll effects
   const { scrollY } = useScroll();
   const scrollParallaxY = useTransform(scrollY, [0, 600], [0, 140]);
-  const heroRotate = useTransform(scrollY, [0, 600], [0, 20]);
+  const heroRotate = useTransform(scrollY, [0, 600], [0, 15]);
+
+  useEffect(() => {
+    // Run Anime.js entrance timeline
+    animateHeroEntrance('.anime-hero-title', '.anime-hero-sub', '.anime-hero-badge');
+    const floatAnim = initContinuousFloating('.anime-float-tag');
+
+    return () => {
+      if (floatAnim) floatAnim.pause();
+    };
+  }, []);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -39,7 +51,7 @@ export const HeroSection: React.FC = () => {
     <section
       id="hero"
       ref={containerRef}
-      className="relative min-h-[95vh] pt-32 pb-20 flex items-center justify-center overflow-hidden"
+      className="relative min-h-[90vh] pt-28 sm:pt-36 pb-16 sm:pb-24 flex items-center justify-center overflow-hidden"
     >
       {/* Dynamic Animated Ambient Background Glows */}
       <div
@@ -70,56 +82,39 @@ export const HeroSection: React.FC = () => {
           {/* Left Column: Headlines & CTAs */}
           <div className="lg:col-span-6 space-y-7 text-center lg:text-left">
             {/* Gastronomy Badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-300 text-xs font-semibold tracking-wider uppercase"
-            >
+            <div className="anime-hero-badge inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-300 text-xs font-semibold tracking-wider uppercase">
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
               <span>Next-Gen Molecular Culinary Lab</span>
               <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
-            </motion.div>
+            </div>
 
             {/* Massive Hero Headline */}
-            <motion.div
-              initial={{ opacity: 0, y: 25 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.1 }}
-            >
-              <h1 className="text-4xl sm:text-6xl xl:text-7xl font-extrabold tracking-tight text-white leading-[1.05]">
+            <div className="anime-hero-title">
+              <h1 className="text-4xl sm:text-6xl xl:text-7xl font-extrabold tracking-tight text-white leading-[1.1] font-display">
                 Taste The <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-orange-500">
                   Extraordinary.
                 </span>
               </h1>
-            </motion.div>
+            </div>
 
             {/* Supporting Copy */}
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-              className="text-base sm:text-lg text-neutral-300/90 max-w-xl mx-auto lg:mx-0 font-light leading-relaxed"
-            >
+            <p className="anime-hero-sub text-base sm:text-lg text-neutral-300/90 max-w-xl mx-auto lg:mx-0 font-normal leading-relaxed">
               Where heritage culinary arts meet modernist molecular gastronomy. Hand-selected A5 Wagyu, 72-hour fermented sourdoughs, and rare autumn truffles — prepared with surgical precision and delivered in hyper-insulated thermal lockers.
-            </motion.p>
+            </p>
 
             {/* Action CTAs */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.3 }}
-              className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2"
-            >
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
               <button
                 id="hero-order-now-btn"
+                ref={heroButtonRef}
                 onClick={(e) => {
+                  if (heroButtonRef.current) animateButtonTactile(heroButtonRef.current);
                   if (heroDish) {
                     addToCart(heroDish, 1, {}, e);
                   }
                 }}
-                className="group relative px-7 py-3.5 rounded-full bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500 text-black font-bold text-sm hover:shadow-[0_0_30px_rgba(245,158,11,0.45)] transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2.5"
+                className="group relative px-7 py-3.5 rounded-full bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500 text-black font-bold text-sm hover:shadow-[0_0_30px_rgba(245,158,11,0.45)] transition-all flex items-center gap-2.5 active:scale-95"
               >
                 <span>Order Signature Wagyu ($28.50)</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -128,11 +123,11 @@ export const HeroSection: React.FC = () => {
               <button
                 id="hero-explore-menu-btn"
                 onClick={scrollToMenu}
-                className="px-6 py-3.5 rounded-full bg-white/[0.04] hover:bg-white/[0.09] text-white font-semibold text-sm border border-white/10 hover:border-white/20 transition-all backdrop-blur-md"
+                className="px-6 py-3.5 rounded-full bg-white/[0.04] hover:bg-white/[0.09] text-white font-semibold text-sm border border-white/10 hover:border-white/20 transition-all backdrop-blur-md active:scale-95"
               >
                 Explore Full Menu
               </button>
-            </motion.div>
+            </div>
 
             {/* Quick Metrics Bar */}
             <motion.div
@@ -223,7 +218,7 @@ export const HeroSection: React.FC = () => {
 
                 {/* Floating Ingredient Node 1: Black Truffle Carpaccio */}
                 <div
-                  className="absolute -top-4 -left-6 sm:-left-10 px-3.5 py-2 rounded-2xl glass-panel border border-amber-400/30 flex items-center gap-2.5 shadow-xl animate-subtle-float"
+                  className="anime-float-tag absolute -top-4 -left-2 sm:-left-10 px-3.5 py-2 rounded-2xl glass-panel border border-amber-400/30 flex items-center gap-2.5 shadow-xl"
                   style={{
                     transform: `translate(${mousePos.x * -25}px, ${mousePos.y * -25}px) translateZ(50px)`,
                   }}
@@ -237,7 +232,7 @@ export const HeroSection: React.FC = () => {
 
                 {/* Floating Ingredient Node 2: A5 Wagyu Marrow */}
                 <div
-                  className="absolute -bottom-6 -right-4 sm:-right-8 px-4 py-2.5 rounded-2xl glass-panel border border-orange-400/30 flex items-center gap-3 shadow-xl animate-subtle-float-reverse"
+                  className="anime-float-tag absolute -bottom-6 -right-2 sm:-right-8 px-4 py-2.5 rounded-2xl glass-panel border border-orange-400/30 flex items-center gap-3 shadow-xl"
                   style={{
                     transform: `translate(${mousePos.x * 30}px, ${mousePos.y * 30}px) translateZ(60px)`,
                   }}
@@ -253,7 +248,7 @@ export const HeroSection: React.FC = () => {
 
                 {/* Floating Price & Add Tag */}
                 <div
-                  className="absolute top-1/2 -right-8 sm:-right-12 -translate-y-1/2 px-4 py-2.5 rounded-2xl bg-[#08090D]/90 border border-amber-500/40 backdrop-blur-xl shadow-2xl flex items-center gap-3"
+                  className="anime-float-tag absolute top-1/2 -right-4 sm:-right-12 -translate-y-1/2 px-4 py-2.5 rounded-2xl bg-[#08090D]/90 border border-amber-500/40 backdrop-blur-xl shadow-2xl flex items-center gap-3"
                   style={{
                     transform: `translate(${mousePos.x * 20}px, ${mousePos.y * 20}px) translateZ(70px)`,
                   }}
