@@ -17,6 +17,12 @@ interface FoodContextType {
   isTrackingOpen: boolean;
   ordersHistory: Order[];
   isOrderHistoryOpen: boolean;
+  isProductManagerOpen: boolean;
+  setIsProductManagerOpen: (open: boolean) => void;
+  addCustomDish: (dish: Omit<FoodItem, 'id'>) => void;
+  updateDish: (id: string, updates: Partial<FoodItem>) => void;
+  deleteDish: (id: string) => void;
+  resetDefaultProducts: () => void;
   setIsOrderHistoryOpen: (open: boolean) => void;
   reorder: (order: Order) => void;
   clearOrderHistory: () => void;
@@ -51,14 +57,58 @@ interface FoodContextType {
 const FoodContext = createContext<FoodContextType | null>(null);
 
 export const FoodProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [foodItems, setFoodItems] = useState<FoodItem[]>(INITIAL_FOOD_ITEMS);
+  // 1. Initialize product catalog directly from website local storage
+  const [foodItems, setFoodItems] = useState<FoodItem[]>(() => {
+    try {
+      const local = localStorage.getItem('bitewithtaste_products');
+      if (local) {
+        const parsed = JSON.parse(local);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch (e) {
+      console.error('Failed reading bitewithtaste_products from localStorage', e);
+    }
+    return INITIAL_FOOD_ITEMS;
+  });
+
+  // 2. Initialize inventory from website local storage
   const [inventory, setInventory] = useState<Record<string, number>>(() => {
+    try {
+      const local = localStorage.getItem('bitewithtaste_inventory');
+      if (local) {
+        const parsed = JSON.parse(local);
+        if (parsed && typeof parsed === 'object') {
+          return parsed;
+        }
+      }
+    } catch (e) {}
+
     const map: Record<string, number> = {};
     INITIAL_FOOD_ITEMS.forEach((f) => {
       map[f.id] = f.inStock;
     });
     return map;
   });
+
+  // Automatically sync and persist food items whenever changed
+  useEffect(() => {
+    try {
+      localStorage.setItem('bitewithtaste_products', JSON.stringify(foodItems));
+    } catch (e) {
+      console.error('Failed to persist products to localStorage', e);
+    }
+  }, [foodItems]);
+
+  // Automatically sync and persist inventory whenever changed
+  useEffect(() => {
+    try {
+      localStorage.setItem('bitewithtaste_inventory', JSON.stringify(inventory));
+    } catch (e) {
+      console.error('Failed to persist inventory to localStorage', e);
+    }
+  }, [inventory]);
 
   const [cart, setCart] = useState<CartItem[]>(() => {
     try {
@@ -82,6 +132,7 @@ export const FoodProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isAIOpen, setIsAIOpen] = useState(false);
+  const [isProductManagerOpen, setIsProductManagerOpen] = useState(false);
   const [activeDetailDish, setActiveDetailDish] = useState<FoodItem | null>(null);
   const [activeOrder, setActiveOrder] = useState<Order | null>(null);
   const [isTrackingOpen, setIsTrackingOpen] = useState(false);
@@ -355,6 +406,53 @@ export const FoodProvider: React.FC<{ children: React.ReactNode }> = ({ children
     showToast('Orders vault history cleared.');
   };
 
+  // Local Product Data Vault Actions (Connected to localStorage)
+  const addCustomDish = (newDish: Omit<FoodItem, 'id'>) => {
+    const id = `dish-custom-${Date.now()}`;
+    const dishWithId: FoodItem = {
+      ...newDish,
+      id,
+      inStock: newDish.inStock ?? 20,
+    };
+    setFoodItems((prev) => [dishWithId, ...prev]);
+    setInventory((prev) => ({ ...prev, [id]: dishWithId.inStock }));
+    showToast(`Added "${newDish.name}" to website local products!`);
+  };
+
+  const updateDish = (id: string, updates: Partial<FoodItem>) => {
+    setFoodItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, ...updates } : item))
+    );
+    if (updates.inStock !== undefined) {
+      setInventory((prev) => ({ ...prev, [id]: updates.inStock! }));
+    }
+    showToast(`Product updated in local storage!`);
+  };
+
+  const deleteDish = (id: string) => {
+    setFoodItems((prev) => prev.filter((item) => item.id !== id));
+    setInventory((prev) => {
+      const copy = { ...prev };
+      delete copy[id];
+      return copy;
+    });
+    showToast('Product removed from local data.');
+  };
+
+  const resetDefaultProducts = () => {
+    try {
+      localStorage.removeItem('bitewithtaste_products');
+      localStorage.removeItem('bitewithtaste_inventory');
+    } catch {}
+    setFoodItems(INITIAL_FOOD_ITEMS);
+    const map: Record<string, number> = {};
+    INITIAL_FOOD_ITEMS.forEach((f) => {
+      map[f.id] = f.inStock;
+    });
+    setInventory(map);
+    showToast('Restored default menu to website local data.');
+  };
+
   // Fetch initial orders from server if any
   useEffect(() => {
     const fetchOrders = async () => {
@@ -399,6 +497,12 @@ export const FoodProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isTrackingOpen,
         ordersHistory,
         isOrderHistoryOpen,
+        isProductManagerOpen,
+        setIsProductManagerOpen,
+        addCustomDish,
+        updateDish,
+        deleteDish,
+        resetDefaultProducts,
         setIsOrderHistoryOpen,
         reorder,
         clearOrderHistory,

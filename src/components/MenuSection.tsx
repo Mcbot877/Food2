@@ -4,11 +4,11 @@ import { FoodCard } from './FoodCard';
 import { useFood } from '../context/FoodContext';
 import { FoodCategory } from '../types';
 import { CATEGORIES } from '../data/mockData';
-import { Search, SlidersHorizontal, RefreshCw, Flame, DollarSign, Sparkles, Check } from 'lucide-react';
+import { Search, SlidersHorizontal, RefreshCw, Flame, DollarSign, Sparkles, Check, Database } from 'lucide-react';
 import { animateCardsStagger, animateSliderPulse, animateButtonTactile } from '../utils/animeAnimations';
 
 export const MenuSection: React.FC = () => {
-  const { foodItems, selectedCategory, setSelectedCategory, inventory } = useFood();
+  const { foodItems, selectedCategory, setSelectedCategory, inventory, setIsProductManagerOpen } = useFood();
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'recommended' | 'price-low' | 'price-high' | 'rating'>('recommended');
   const [maxPrice, setMaxPrice] = useState<number>(45);
@@ -120,6 +120,16 @@ export const MenuSection: React.FC = () => {
 
           {/* Quick Stats & Live Refresh Indicator */}
           <div className="flex flex-wrap items-center gap-3">
+            <button
+              onClick={() => setIsProductManagerOpen(true)}
+              className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-xs font-mono text-amber-300 border border-amber-500/30 transition-colors active:scale-95"
+              title="Manage local products and database in website storage"
+            >
+              <Database className="w-3.5 h-3.5 text-amber-400" />
+              <span>Local Product Data</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+            </button>
+
             <button
               onClick={handleRefreshInventory}
               className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-xs font-mono text-neutral-300 border border-white/10 transition-colors active:scale-95"

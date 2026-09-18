@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ShoppingBag, Search, UtensilsCrossed, Menu, X, Heart, Clock, Receipt } from 'lucide-react';
+import { ShoppingBag, Search, UtensilsCrossed, Menu, X, Heart, Clock, Receipt, Database } from 'lucide-react';
 import { useFood } from '../context/FoodContext';
 
 export const Navbar: React.FC = () => {
@@ -12,7 +12,8 @@ export const Navbar: React.FC = () => {
     activeOrder, 
     setIsTrackingOpen,
     ordersHistory,
-    setIsOrderHistoryOpen
+    setIsOrderHistoryOpen,
+    setIsProductManagerOpen
   } = useFood();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -160,6 +161,19 @@ export const Navbar: React.FC = () => {
               )}
             </a>
 
+            {/* Local Products Storage Trigger Button */}
+            <button
+              id="navbar-local-data-btn"
+              onClick={() => setIsProductManagerOpen(true)}
+              className="relative hidden md:flex items-center gap-1.5 px-3 py-2 rounded-full bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 hover:text-white border border-amber-500/30 text-xs font-semibold transition-all active:scale-95"
+              aria-label="Manage Local Product Data"
+              title="Manage Products in Website Local Storage"
+            >
+              <Database className="w-3.5 h-3.5 text-amber-400" />
+              <span className="hidden xl:inline font-mono text-[11px]">Local Data</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+            </button>
+
             {/* Orders Vault Trigger Button */}
             <button
               id="navbar-orders-btn"
@@ -233,6 +247,22 @@ export const Navbar: React.FC = () => {
                 ))}
               </div>
               <div className="pt-3 border-t border-white/10 flex flex-col gap-2">
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setIsProductManagerOpen(true);
+                  }}
+                  className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold"
+                >
+                  <span className="flex items-center gap-2">
+                    <Database className="w-4 h-4 text-amber-400" />
+                    <span>Website Local Data Hub</span>
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono text-[10px]">
+                    Connected
+                  </span>
+                </button>
+
                 <button
                   onClick={() => {
                     setMobileMenuOpen(false);
