@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight, Star, Plus, Flame, Sparkles } from 'lucide-react';
 import { useFood } from '../context/FoodContext';
 import { FoodItem } from '../types';
+import { animateButtonTactile } from '../utils/animeAnimations';
 
 export const PopularCarousel: React.FC = () => {
   const { foodItems, addToCart, setActiveDetailDish } = useFood();
@@ -180,18 +181,40 @@ export const PopularCarousel: React.FC = () => {
           </div>
         </div>
 
-        {/* Indicator dots */}
-        <div className="flex items-center justify-center gap-2 mt-6">
-          {popularDishes.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setActiveIndex(idx)}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                idx === activeIndex ? 'w-8 bg-amber-400' : 'w-2 bg-white/20 hover:bg-white/40'
-              }`}
-              aria-label={`Go to slide ${idx + 1}`}
-            />
-          ))}
+        {/* Animated Carousel Slide Bar */}
+        <div className="max-w-md mx-auto mt-8 px-4">
+          <div className="flex items-center justify-between text-xs font-mono text-neutral-400 mb-2">
+            <span>Dish 0{activeIndex + 1} of 0{popularDishes.length}</span>
+            <span className="text-amber-400 font-semibold">{popularDishes[activeIndex]?.name}</span>
+          </div>
+
+          <div className="relative h-2 bg-neutral-900 rounded-full overflow-hidden border border-white/[0.08]">
+            <div
+              className="h-full bg-gradient-to-r from-amber-500 to-orange-400 rounded-full transition-all duration-300 relative"
+              style={{ width: `${((activeIndex + 1) / popularDishes.length) * 100}%` }}
+            >
+              <div className="absolute inset-0 bg-white/20 animate-pulse" />
+            </div>
+          </div>
+
+          <div className="flex items-center justify-center gap-2 mt-4">
+            {popularDishes.map((dish, idx) => (
+              <button
+                key={idx}
+                onClick={(e) => {
+                  animateButtonTactile(e.currentTarget);
+                  setActiveIndex(idx);
+                }}
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  idx === activeIndex
+                    ? 'w-10 bg-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.5)]'
+                    : 'w-2.5 bg-white/20 hover:bg-white/40'
+                }`}
+                aria-label={`Go to slide ${idx + 1}`}
+                title={dish.name}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>

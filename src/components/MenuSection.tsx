@@ -5,7 +5,7 @@ import { useFood } from '../context/FoodContext';
 import { FoodCategory } from '../types';
 import { CATEGORIES } from '../data/mockData';
 import { Search, SlidersHorizontal, RefreshCw, Flame, DollarSign, Sparkles, Check } from 'lucide-react';
-import { animateCardsStagger } from '../utils/animeAnimations';
+import { animateCardsStagger, animateSliderPulse, animateButtonTactile } from '../utils/animeAnimations';
 
 export const MenuSection: React.FC = () => {
   const { foodItems, selectedCategory, setSelectedCategory, inventory } = useFood();
@@ -15,6 +15,7 @@ export const MenuSection: React.FC = () => {
   const [onlyChefSpecials, setOnlyChefSpecials] = useState(false);
   const [onlyInStock, setOnlyInStock] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const priceBadgeRef = React.useRef<HTMLSpanElement>(null);
 
   // Compute filtered & sorted items
   const displayedItems = useMemo(() => {
@@ -186,30 +187,70 @@ export const MenuSection: React.FC = () => {
               )}
             </div>
 
-            {/* Interactive Price Range Slide Bar */}
+            {/* Interactive Price Range Slide Bar with Real-time Animation */}
             <div className="lg:col-span-4 flex flex-col justify-center px-2">
               <div className="flex items-center justify-between text-xs font-mono mb-1.5">
-                <span className="text-neutral-400 flex items-center gap-1">
-                  <DollarSign className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Max Price Slide Bar:</span>
+                <span className="text-neutral-300 flex items-center gap-1 font-semibold">
+                  <DollarSign className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+                  <span>Price Slide Bar:</span>
                 </span>
-                <span className="text-amber-400 font-bold font-mono text-sm">${maxPrice}.00</span>
+                <span
+                  ref={priceBadgeRef}
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold font-mono text-xs shadow-[0_0_10px_rgba(245,158,11,0.2)] transition-transform"
+                >
+                  Max ${maxPrice}.00
+                </span>
               </div>
-              <input
-                id="menu-price-slider"
-                type="range"
-                min="12"
-                max="45"
-                step="1"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(Number(e.target.value))}
-                className="w-full h-1.5 bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
-              />
-              <div className="flex justify-between text-[10px] font-mono text-neutral-500 mt-1">
-                <span>$12</span>
-                <span>$25</span>
-                <span>$35</span>
-                <span>$45</span>
+
+              {/* Animated Track Container */}
+              <div className="relative w-full py-2">
+                {/* Background base track */}
+                <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 h-2 bg-neutral-900 rounded-full overflow-hidden border border-white/[0.06]">
+                  {/* Glowing Animated Gradient Track Fill */}
+                  <div
+                    className="h-full bg-gradient-to-r from-amber-500 via-orange-400 to-amber-300 rounded-full transition-all duration-150 relative"
+                    style={{ width: `${((maxPrice - 12) / (45 - 12)) * 100}%` }}
+                  >
+                    <div className="absolute inset-0 bg-white/20 animate-pulse" />
+                  </div>
+                </div>
+
+                {/* Range Input Slider overlaid */}
+                <input
+                  id="menu-price-slider"
+                  type="range"
+                  min="12"
+                  max="45"
+                  step="1"
+                  value={maxPrice}
+                  onChange={(e) => {
+                    const val = Number(e.target.value);
+                    setMaxPrice(val);
+                    if (priceBadgeRef.current) animateSliderPulse(priceBadgeRef.current);
+                  }}
+                  className="relative z-10 w-full h-2 bg-transparent appearance-none cursor-pointer accent-amber-400 focus:outline-none"
+                />
+              </div>
+
+              {/* Animated Quick Presets */}
+              <div className="flex justify-between items-center text-[10px] font-mono text-neutral-400 mt-0.5">
+                {[12, 20, 30, 45].map((preset) => (
+                  <button
+                    key={preset}
+                    onClick={(e) => {
+                      animateButtonTactile(e.currentTarget);
+                      setMaxPrice(preset);
+                      if (priceBadgeRef.current) animateSliderPulse(priceBadgeRef.current);
+                    }}
+                    className={`px-1.5 py-0.5 rounded transition-all active:scale-90 ${
+                      maxPrice === preset
+                        ? 'bg-amber-500/30 text-amber-300 font-bold border border-amber-500/50'
+                        : 'hover:text-amber-300 hover:bg-white/[0.04]'
+                    }`}
+                  >
+                    ${preset}
+                  </button>
+                ))}
               </div>
             </div>
 

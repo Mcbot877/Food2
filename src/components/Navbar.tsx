@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ShoppingBag, Search, Sparkles, Menu, X, Heart, Clock, Receipt } from 'lucide-react';
+import { ShoppingBag, Search, UtensilsCrossed, Menu, X, Heart, Clock, Receipt } from 'lucide-react';
 import { useFood } from '../context/FoodContext';
 
 export const Navbar: React.FC = () => {
@@ -8,7 +8,6 @@ export const Navbar: React.FC = () => {
     cartTotalCount, 
     setIsCartOpen, 
     setIsSearchOpen, 
-    setIsAIOpen, 
     favorites, 
     activeOrder, 
     setIsTrackingOpen,
@@ -82,24 +81,19 @@ export const Navbar: React.FC = () => {
           >
             <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 via-orange-500 to-amber-600 flex items-center justify-center p-[1px] shadow-lg shadow-amber-500/20 group-hover:shadow-amber-500/40 transition-all">
               <div className="w-full h-full bg-[#08090D] rounded-[11px] flex items-center justify-center">
-                <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-tr from-amber-300 to-amber-500 font-display text-lg tracking-wider">
-                  Λ
-                </span>
+                <UtensilsCrossed className="w-5 h-5 text-amber-400 group-hover:rotate-12 transition-transform duration-300" />
               </div>
               <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full animate-ping" />
               <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full" />
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-display font-extrabold tracking-tight text-lg text-white group-hover:text-amber-300 transition-colors">
-                  AURA
-                </span>
-                <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                  GASTROLAB
+                <span className="font-display font-extrabold tracking-tight text-xl text-white group-hover:text-amber-300 transition-colors">
+                  BiteWith<span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">Taste</span>
                 </span>
               </div>
-              <p className="text-[10px] text-neutral-400 tracking-wider font-mono hidden sm:block">
-                NEXT-GEN MOLECULAR DINING
+              <p className="text-[9px] text-neutral-400 tracking-wider font-mono hidden sm:block uppercase">
+                Artisanal Gourmet Dining
               </p>
             </div>
           </a>
@@ -139,17 +133,6 @@ export const Navbar: React.FC = () => {
                 <span className="text-amber-300/90 font-mono">14m Prep Avg</span>
               </div>
             )}
-
-            {/* AI Gastronomy Concierge Button */}
-            <button
-              id="ai-sommelier-btn"
-              onClick={() => setIsAIOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500/15 via-orange-500/15 to-purple-500/15 border border-amber-500/30 text-amber-300 hover:border-amber-400 hover:text-amber-200 text-xs font-semibold transition-all hover:shadow-[0_0_15px_rgba(245,158,11,0.25)]"
-              title="AI Flavor Pairing & Gastronomy Assistant"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-spin" style={{ animationDuration: '6s' }} />
-              <span className="hidden md:inline">AI Taste Match</span>
-            </button>
 
             {/* Search Trigger Button */}
             <button
@@ -264,16 +247,6 @@ export const Navbar: React.FC = () => {
                   <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-mono text-[10px]">
                     {ordersHistory.length}
                   </span>
-                </button>
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    setIsAIOpen(true);
-                  }}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-semibold"
-                >
-                  <Sparkles className="w-4 h-4" />
-                  <span>AI Taste Match Concierge</span>
                 </button>
                 {activeOrder && (
                   <button

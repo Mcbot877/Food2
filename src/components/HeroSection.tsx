@@ -84,16 +84,16 @@ export const HeroSection: React.FC = () => {
             {/* Gastronomy Badge */}
             <div className="anime-hero-badge inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-300 text-xs font-semibold tracking-wider uppercase">
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>Next-Gen Molecular Culinary Lab</span>
+              <span>BiteWithTaste • Haute Cuisine</span>
               <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
             </div>
 
             {/* Massive Hero Headline */}
             <div className="anime-hero-title">
               <h1 className="text-4xl sm:text-6xl xl:text-7xl font-extrabold tracking-tight text-white leading-[1.1] font-display">
-                Taste The <br />
+                Every Bite <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-orange-500">
-                  Extraordinary.
+                  Crafted With Taste.
                 </span>
               </h1>
             </div>

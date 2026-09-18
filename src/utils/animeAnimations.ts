@@ -101,6 +101,18 @@ export const animateDrawerSlideIn = (drawerEl: HTMLElement) => {
   }
 };
 
+export const animateSliderPulse = (el: HTMLElement) => {
+  try {
+    animate(el, {
+      scale: [1, 1.15, 1],
+      duration: 280,
+      ease: 'outBack',
+    });
+  } catch (err) {
+    console.debug('Anime slider fallback', err);
+  }
+};
+
 export const animatePulseGlow = (selector: string) => {
   try {
     return animate(selector, {

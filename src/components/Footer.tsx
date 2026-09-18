@@ -1,5 +1,5 @@
 import React from 'react';
-import { Instagram, Twitter, Linkedin, MapPin, Phone, Mail, Clock, Sparkles } from 'lucide-react';
+import { Instagram, Twitter, Linkedin, MapPin, Phone, Mail, Clock, UtensilsCrossed } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
@@ -14,16 +14,16 @@ export const Footer: React.FC = () => {
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center p-[1px]">
                 <div className="w-full h-full bg-[#08090D] rounded-[11px] flex items-center justify-center">
-                  <span className="font-extrabold text-amber-400 font-display text-base">Λ</span>
+                  <UtensilsCrossed className="w-5 h-5 text-amber-400" />
                 </div>
               </div>
               <span className="font-display font-bold text-xl text-white tracking-tight">
-                AURA GASTROLAB
+                BiteWith<span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">Taste</span>
               </span>
             </div>
 
             <p className="text-xs sm:text-sm text-neutral-400 font-light leading-relaxed max-w-sm">
-              Next-generation molecular cuisine and culinary physics. Dedicated to the surgical elevation of flavor, temperature contrast, and sensory dining.
+              Artisanal gourmet cuisine delivered fresh from our master kitchens. Dedicated to exceptional flavor, temperature perfection, and culinary craft.
             </p>
 
             <div className="flex items-center gap-3 pt-2">
@@ -118,11 +118,11 @@ export const Footer: React.FC = () => {
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                <span className="font-mono">+1 (800) 428-AURA</span>
+                <span className="font-mono">+1 (800) 580-BITE</span>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                <span>concierge@auragastrolab.com</span>
+                <span>concierge@bitewithtaste.com</span>
               </li>
             </ul>
           </div>
@@ -130,7 +130,7 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Legal & Live System Heartbeat */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-neutral-500">
-          <p>© 2026 AURA GASTROLAB INC. ALL RIGHTS RESERVED.</p>
+          <p>© 2026 BITEWITHTASTE INC. ALL RIGHTS RESERVED.</p>
 
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1.5 text-emerald-400">

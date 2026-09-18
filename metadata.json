@@ -1,6 +1,6 @@
 {
-  "name": "Aura Gastrolab - Next-Gen Food Experience",
-  "description": "A premium, fully animated futuristic food ordering and luxury restaurant platform with interactive 3D elements, rapid order processing, and cinematic culinary visuals.",
+  "name": "BiteWithTaste",
+  "description": "BiteWithTaste - A luxury gourmet food ordering platform featuring artisanal gastronomy, animated top highlights slide bar, rapid kitchen sync, and interactive dining experience.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

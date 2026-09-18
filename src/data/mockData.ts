@@ -417,11 +417,20 @@ export const REVIEWS: ReviewItem[] = [
 
 export const PROMO_OFFERS: PromoOffer[] = [
   {
+    code: 'BITEWITHTASTE',
+    title: 'First Tasting Welcome',
+    badge: '15% OFF',
+    discountPercent: 15,
+    description: 'Enjoy 15% off your premier artisanal gastronomy order at BiteWithTaste.',
+    expiry: 'Valid Today',
+    color: 'from-amber-500/20 to-orange-600/30',
+  },
+  {
     code: 'AURA20',
-    title: 'First Voyage Feast',
+    title: 'Premier Feast',
     badge: '20% OFF',
     discountPercent: 20,
-    description: 'Enjoy 20% off your premier culinary order of $40 or more.',
+    description: 'Enjoy 20% off your culinary order of $40 or more.',
     expiry: 'Valid Today',
     color: 'from-amber-500/20 to-orange-600/30',
   },

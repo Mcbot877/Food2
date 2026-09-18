@@ -109,7 +109,7 @@ export const AboutSection: React.FC = () => {
             </h2>
 
             <p className="text-neutral-300 text-sm sm:text-base font-light leading-relaxed">
-              Founded in 2021 by modernist chefs and software architects, AURA GASTROLAB was born from a singular obsession: Why should world-class culinary craftsmanship be restricted to static tablecloth dining?
+              Founded in 2021 by modernist chefs and culinary artisans, BiteWithTaste was born from a singular obsession: Why should world-class culinary craftsmanship be restricted to static tablecloth dining?
             </p>
 
             <p className="text-neutral-400 text-sm font-light leading-relaxed">
