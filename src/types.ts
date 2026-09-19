@@ -53,7 +53,7 @@ export interface Order {
     name: string;
     price: number;
     quantity: number;
-    selectedCustomizations: Record<string, string>;
+    selectedCustomizations?: Record<string, string>;
   }[];
   subtotal: number;
   deliveryFee: number;
@@ -63,6 +63,9 @@ export interface Order {
   address: string;
   status: 'queued' | 'preparing' | 'plating' | 'in_transit' | 'delivered';
   createdAt: string;
+  deliveredAt?: string;
+  phone?: string;
+  paymentMethod?: string;
   estimatedMinutes: number;
 }
 

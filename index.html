@@ -2,6 +2,35 @@
 <html lang="en" class="dark scroll-smooth">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      (function() {
+        try {
+          var realFetch = window.fetch ? window.fetch.bind(window) : null;
+          var fetchHolder = realFetch;
+          Object.defineProperty(window, 'fetch', {
+            get: function() {
+              return fetchHolder;
+            },
+            set: function(val) {
+              fetchHolder = val;
+            },
+            configurable: true,
+            enumerable: true
+          });
+        } catch (err) {
+          try {
+            if (realFetch) {
+              Object.defineProperty(window, 'fetch', {
+                value: realFetch,
+                writable: true,
+                configurable: true,
+                enumerable: true
+              });
+            }
+          } catch (e) {}
+        }
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BiteWithTaste</title>
     <meta name="description" content="BiteWithTaste - A luxury gourmet food ordering platform featuring artisanal gastronomy, animated top highlights slide bar, rapid kitchen sync, and interactive dining experience." />

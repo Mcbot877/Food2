@@ -1,0 +1,211 @@
+[
+  {
+    "id": "AURA-1002",
+    "items": [
+      {
+        "foodId": "dish-1",
+        "name": "Cyber Truffle Wagyu Burger",
+        "price": 28.5,
+        "quantity": 2,
+        "selectedCustomizations": {
+          "doneness": "Medium Rare (Recommended)"
+        }
+      },
+      {
+        "foodId": "dish-5",
+        "name": "Supernova Golden Dome Ganache",
+        "price": 18,
+        "quantity": 1
+      }
+    ],
+    "subtotal": 75,
+    "deliveryFee": 0,
+    "discount": 0,
+    "total": 75,
+    "customerName": "Sophia Laurent",
+    "address": "88 Ocean Avenue, Penthouse 4B, Metro Center",
+    "phone": "+1 (555) 234-8901",
+    "paymentMethod": "Apple Pay",
+    "status": "delivered",
+    "createdAt": "2026-09-19T06:12:12.867Z",
+    "estimatedMinutes": 18,
+    "deliveredAt": "2026-09-19T06:16:21.502Z"
+  },
+  {
+    "id": "AURA-1003",
+    "items": [
+      {
+        "foodId": "dish-2",
+        "name": "Solar Flare Neapolitan Pizza",
+        "price": 24,
+        "quantity": 1,
+        "selectedCustomizations": {
+          "crust": "Charred Leopard Sourdough"
+        }
+      },
+      {
+        "foodId": "dish-6",
+        "name": "Liquid Lumina Botanical Elixir",
+        "price": 14.5,
+        "quantity": 1
+      }
+    ],
+    "subtotal": 38.5,
+    "deliveryFee": 0,
+    "discount": 0,
+    "total": 38.5,
+    "customerName": "Alexander Vance",
+    "address": "412 High Street, Loft 12, Financial District",
+    "phone": "+1 (555) 345-6712",
+    "paymentMethod": "Visa Platinum",
+    "status": "preparing",
+    "createdAt": "2026-09-19T06:04:12.867Z",
+    "estimatedMinutes": 14
+  },
+  {
+    "id": "AURA-1004",
+    "items": [
+      {
+        "foodId": "dish-4",
+        "name": "Obsidian Squid Ink Tagliolini",
+        "price": 31,
+        "quantity": 1
+      },
+      {
+        "foodId": "dish-9",
+        "name": "Tartufo Bianco Woodfired Pizza",
+        "price": 29,
+        "quantity": 1
+      }
+    ],
+    "subtotal": 60,
+    "deliveryFee": 0,
+    "discount": 5,
+    "total": 55,
+    "customerName": "Elena Rostova",
+    "address": "15 Park Lane, Villa 3, Silicon Hills",
+    "phone": "+1 (555) 456-7890",
+    "paymentMethod": "Amex Centurion",
+    "status": "plating",
+    "createdAt": "2026-09-19T05:58:12.867Z",
+    "estimatedMinutes": 10
+  },
+  {
+    "id": "AURA-1005",
+    "items": [
+      {
+        "foodId": "dish-8",
+        "name": "Velocity Double Smashed Truffle",
+        "price": 19.5,
+        "quantity": 1
+      },
+      {
+        "foodId": "dish-34",
+        "name": "Loaded Golden Truffle Fries",
+        "price": 12.5,
+        "quantity": 1
+      }
+    ],
+    "subtotal": 32,
+    "deliveryFee": 4.5,
+    "discount": 0,
+    "total": 36.5,
+    "customerName": "Marcus Sterling",
+    "address": "742 Evergreen Terrace, Suite 8A",
+    "phone": "+1 (555) 987-6543",
+    "paymentMethod": "Mastercard",
+    "status": "in_transit",
+    "createdAt": "2026-09-19T05:51:12.867Z",
+    "estimatedMinutes": 5
+  },
+  {
+    "id": "AURA-1001",
+    "items": [
+      {
+        "foodId": "dish-3",
+        "name": "Neon Glaze Gold Chicken",
+        "price": 22,
+        "quantity": 1,
+        "selectedCustomizations": {
+          "spice": "Medium Glow"
+        }
+      },
+      {
+        "foodId": "dish-12",
+        "name": "Matcha Jade Pistachio Mousse",
+        "price": 16.5,
+        "quantity": 1
+      }
+    ],
+    "subtotal": 38.5,
+    "deliveryFee": 0,
+    "discount": 0,
+    "total": 38.5,
+    "customerName": "David K. Miller",
+    "address": "220 West End Ave, Apt 14C",
+    "phone": "+1 (555) 789-0123",
+    "paymentMethod": "Cash on Delivery",
+    "status": "delivered",
+    "createdAt": "2026-09-19T05:31:12.867Z",
+    "deliveredAt": "2026-09-19T05:56:12.867Z",
+    "estimatedMinutes": 0
+  },
+  {
+    "id": "AURA-998",
+    "items": [
+      {
+        "foodId": "dish-11",
+        "name": "Tokyo Katsu Sando Supreme",
+        "price": 23,
+        "quantity": 2
+      },
+      {
+        "foodId": "dish-6",
+        "name": "Liquid Lumina Botanical Elixir",
+        "price": 14.5,
+        "quantity": 2
+      }
+    ],
+    "subtotal": 75,
+    "deliveryFee": 0,
+    "discount": 10,
+    "total": 65,
+    "customerName": "Chloe Bennett",
+    "address": "55 Marina Boulevard, Suite 902",
+    "phone": "+1 (555) 321-4567",
+    "paymentMethod": "Google Pay",
+    "status": "delivered",
+    "createdAt": "2026-09-19T04:46:12.867Z",
+    "deliveredAt": "2026-09-19T05:21:12.867Z",
+    "estimatedMinutes": 0
+  },
+  {
+    "id": "AURA-995",
+    "items": [
+      {
+        "foodId": "dish-7",
+        "name": "Zenith Hydroponic Garden Bowl",
+        "price": 21,
+        "quantity": 1
+      },
+      {
+        "foodId": "dish-6",
+        "name": "Liquid Lumina Botanical Elixir",
+        "price": 14.5,
+        "quantity": 1
+      }
+    ],
+    "subtotal": 35.5,
+    "deliveryFee": 0,
+    "discount": 0,
+    "total": 35.5,
+    "customerName": "Dr. Julian Thorne",
+    "address": "10 Innovation Way, Suite 400",
+    "phone": "+1 (555) 654-3210",
+    "paymentMethod": "Apple Pay",
+    "status": "delivered",
+    "createdAt": "2026-09-19T03:56:12.867Z",
+    "deliveredAt": "2026-09-19T04:31:12.867Z",
+    "estimatedMinutes": 0
+  }
+]

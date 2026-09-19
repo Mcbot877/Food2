@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ShoppingBag, Search, UtensilsCrossed, Menu, X, Heart, Clock, Receipt, Database } from 'lucide-react';
+import { ShoppingBag, Search, UtensilsCrossed, Menu, X, Heart, Clock, Receipt, Database, ShieldCheck } from 'lucide-react';
 import { useFood } from '../context/FoodContext';
 
 export const Navbar: React.FC = () => {
@@ -13,7 +13,10 @@ export const Navbar: React.FC = () => {
     setIsTrackingOpen,
     ordersHistory,
     setIsOrderHistoryOpen,
-    setIsProductManagerOpen
+    setIsProductManagerOpen,
+    isAdminOpen,
+    setIsAdminOpen,
+    adminOrders,
   } = useFood();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -170,8 +173,25 @@ export const Navbar: React.FC = () => {
               title="Manage Products in Website Local Storage"
             >
               <Database className="w-3.5 h-3.5 text-amber-400" />
-              <span className="hidden xl:inline font-mono text-[11px]">Local Data</span>
+              <span className="hidden xl:inline font-mono text-[11px]">Products</span>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+            </button>
+
+            {/* Admin Panel Dashboard Trigger Button */}
+            <button
+              id="navbar-admin-btn"
+              onClick={() => setIsAdminOpen(true)}
+              className="relative flex items-center gap-1.5 px-3 py-2 rounded-full bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 hover:text-white border border-amber-500/40 text-xs font-bold transition-all active:scale-95 shadow-sm"
+              aria-label="Admin Panel Dashboard"
+              title="Admin Panel: Manage Active Orders & Mark Delivered"
+            >
+              <ShieldCheck className="w-4 h-4 text-amber-400" />
+              <span className="hidden sm:inline">Admin</span>
+              {adminOrders.filter((o) => o.status !== 'delivered').length > 0 && (
+                <span className="w-4 h-4 bg-amber-500 text-zinc-950 font-mono text-[10px] rounded-full flex items-center justify-center font-bold">
+                  {adminOrders.filter((o) => o.status !== 'delivered').length}
+                </span>
+              )}
             </button>
 
             {/* Orders Vault Trigger Button */}
@@ -247,6 +267,23 @@ export const Navbar: React.FC = () => {
                 ))}
               </div>
               <div className="pt-3 border-t border-white/10 flex flex-col gap-2">
+                <button
+                  id="mobile-admin-btn"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setIsAdminOpen(true);
+                  }}
+                  className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-bold shadow-md shadow-amber-500/10"
+                >
+                  <span className="flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-amber-400" />
+                    <span>Admin Panel: Manage Orders</span>
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full bg-amber-500 text-zinc-950 font-mono text-[10px] font-bold">
+                    {adminOrders.filter((o) => o.status !== 'delivered').length} Active
+                  </span>
+                </button>
+
                 <button
                   onClick={() => {
                     setMobileMenuOpen(false);

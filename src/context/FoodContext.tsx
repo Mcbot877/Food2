@@ -12,6 +12,13 @@ interface FoodContextType {
   isCartOpen: boolean;
   isSearchOpen: boolean;
   isAIOpen: boolean;
+  isAdminOpen: boolean;
+  setIsAdminOpen: (open: boolean) => void;
+  adminOrders: Order[];
+  fetchAdminOrders: () => Promise<void>;
+  isAdminLoading: boolean;
+  markOrderAsDelivered: (orderId: string) => Promise<{ success: boolean; error?: string }>;
+  seedDemoOrders: () => Promise<{ success: boolean; message: string }>;
   activeDetailDish: FoodItem | null;
   activeOrder: Order | null;
   isTrackingOpen: boolean;
@@ -63,7 +70,8 @@ export const FoodProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const local = localStorage.getItem('bitewithtaste_products');
       if (local) {
         const parsed = JSON.parse(local);
-        if (Array.isArray(parsed) && parsed.length > 0) {
+        // Hydrate full catalog if user previously had fewer than 20 items
+        if (Array.isArray(parsed) && parsed.length >= 25) {
           return parsed;
         }
       }
@@ -79,7 +87,7 @@ export const FoodProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const local = localStorage.getItem('bitewithtaste_inventory');
       if (local) {
         const parsed = JSON.parse(local);
-        if (parsed && typeof parsed === 'object') {
+        if (parsed && typeof parsed === 'object' && Object.keys(parsed).length >= 25) {
           return parsed;
         }
       }
@@ -132,6 +140,9 @@ export const FoodProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isAIOpen, setIsAIOpen] = useState(false);
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [adminOrders, setAdminOrders] = useState<Order[]>([]);
+  const [isAdminLoading, setIsAdminLoading] = useState(false);
   const [isProductManagerOpen, setIsProductManagerOpen] = useState(false);
   const [activeDetailDish, setActiveDetailDish] = useState<FoodItem | null>(null);
   const [activeOrder, setActiveOrder] = useState<Order | null>(null);
@@ -158,6 +169,79 @@ export const FoodProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setToastMessage((prev) => (prev === msg ? null : prev));
     }, 3200);
   }, []);
+
+  const fetchAdminOrders = useCallback(async () => {
+    setIsAdminLoading(true);
+    try {
+      const res = await fetch('/api/orders');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.orders && Array.isArray(data.orders)) {
+          setAdminOrders(data.orders);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch orders from database:', err);
+    } finally {
+      setIsAdminLoading(false);
+    }
+  }, []);
+
+  const markOrderAsDelivered = async (orderId: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const res = await fetch(`/api/orders/${encodeURIComponent(orderId)}/deliver`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        return { success: false, error: data.error || 'Failed to update order in database.' };
+      }
+
+      const deliveredTime = data.order?.deliveredAt || new Date().toISOString();
+
+      // Update admin orders list
+      setAdminOrders((prev) =>
+        prev.map((ord): Order => (ord.id === orderId ? { ...ord, status: 'delivered' as const, deliveredAt: deliveredTime } : ord))
+      );
+
+      // Update user order history as well
+      setOrdersHistory((prev) => {
+        const updated: Order[] = prev.map((ord): Order =>
+          ord.id === orderId ? { ...ord, status: 'delivered' as const, deliveredAt: deliveredTime } : ord
+        );
+        try {
+          localStorage.setItem('aura_orders_history', JSON.stringify(updated));
+        } catch {}
+        return updated;
+      });
+
+      // Update active order if it's currently tracked
+      setActiveOrder((prev) =>
+        prev?.id === orderId ? { ...prev, status: 'delivered' as const, deliveredAt: deliveredTime } : prev
+      );
+
+      showToast(`Order #${orderId} marked as Delivered in database! ✓`);
+      return { success: true };
+    } catch (err) {
+      return { success: false, error: 'Database network communication error.' };
+    }
+  };
+
+  const seedDemoOrders = async (): Promise<{ success: boolean; message: string }> => {
+    try {
+      const res = await fetch('/api/orders/seed', { method: 'POST' });
+      const data = await res.json();
+      if (res.ok && data.orders) {
+        setAdminOrders(data.orders);
+        showToast('Fresh operational orders loaded into database!');
+        return { success: true, message: data.message };
+      }
+      return { success: false, message: data.error || 'Failed to seed orders' };
+    } catch (e: any) {
+      return { success: false, message: e.message || 'Server error' };
+    }
+  };
 
   // Fetch real-time inventory from backend
   const fetchInventory = useCallback(async () => {
@@ -492,6 +576,13 @@ export const FoodProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isCartOpen,
         isSearchOpen,
         isAIOpen,
+        isAdminOpen,
+        setIsAdminOpen,
+        adminOrders,
+        fetchAdminOrders,
+        isAdminLoading,
+        markOrderAsDelivered,
+        seedDemoOrders,
         activeDetailDish,
         activeOrder,
         isTrackingOpen,

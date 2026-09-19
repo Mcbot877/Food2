@@ -20,6 +20,7 @@ import { SearchModal } from './components/SearchModal';
 import { OrderTrackingModal } from './components/OrderTrackingModal';
 import { OrdersDrawer } from './components/OrdersDrawer';
 import { ProductManagerModal } from './components/ProductManagerModal';
+import { AdminDashboard } from './components/AdminDashboard';
 import { Toast } from './components/Toast';
 import { CustomCursor } from './components/CustomCursor';
 
@@ -61,6 +62,7 @@ export default function App() {
         <OrderTrackingModal />
         <OrdersDrawer />
         <ProductManagerModal />
+        <AdminDashboard />
         <Toast />
       </div>
     </FoodProvider>

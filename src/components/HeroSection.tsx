@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
-import { ArrowRight, Sparkles, Star, Flame, Clock, Award, Plus } from 'lucide-react';
+import { ArrowRight, Sparkles, Star, Flame, Clock, Award, Plus, ShieldCheck } from 'lucide-react';
 import { useFood } from '../context/FoodContext';
 import { animateHeroEntrance, initContinuousFloating, animateButtonTactile } from '../utils/animeAnimations';
 
 export const HeroSection: React.FC = () => {
-  const { foodItems, addToCart, setActiveDetailDish } = useFood();
+  const { foodItems, addToCart, setActiveDetailDish, setIsAdminOpen, adminOrders } = useFood();
   const heroDish = foodItems[0]; // Cyber Truffle Wagyu Burger
 
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -81,11 +81,25 @@ export const HeroSection: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           {/* Left Column: Headlines & CTAs */}
           <div className="lg:col-span-6 space-y-7 text-center lg:text-left">
-            {/* Gastronomy Badge */}
-            <div className="anime-hero-badge inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-300 text-xs font-semibold tracking-wider uppercase">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>BiteWithTaste • Haute Cuisine</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
+            {/* Gastronomy Badge & Admin Quick Launch */}
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5">
+              <div className="anime-hero-badge inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-300 text-xs font-semibold tracking-wider uppercase">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>BiteWithTaste • Haute Cuisine</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
+              </div>
+
+              <button
+                id="hero-admin-btn"
+                onClick={() => setIsAdminOpen(true)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/40 text-xs font-bold transition-all shadow-sm active:scale-95"
+              >
+                <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                <span>Admin Panel</span>
+                <span className="px-1.5 py-0.2 rounded-full bg-amber-500 text-zinc-950 font-mono text-[10px]">
+                  {adminOrders.filter((o) => o.status !== 'delivered').length} Active Orders
+                </span>
+              </button>
             </div>
 
             {/* Massive Hero Headline */}
